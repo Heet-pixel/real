@@ -18,7 +18,7 @@ OFFICE = ("Swastiik Realty", "101, Rudramal Complex, Nr. Swastik Cross Road, Nav
 PHONE = "+91 98250 34030"
 PHONE_HREF = "tel:+919825034030"
 NAV = [("index.html", "Home"), ("about.html", "About"), ("projects.html", "Projects"),
-       ("journey.html", "Journey"), ("photo.html", "Photos")]
+       ("journey.html", "Journey"), ("photo.html", "Photos"), ("memories.html", "Memories")]
 
 def url(p): return f"project-{p['id']}.html"
 def kind(p): return "commercial" if "Commercial" in p["type"] else "residential"
@@ -222,6 +222,18 @@ pchips = '<button class="chip active" data-filter="all">All Photos</button>' + "
 ph = banner("Project <em>Photos</em>", "Every image is taken directly from the official brochure of the project shown.", [("Home", "index.html"), ("Photos", None)], "images/projects/amarjyot_dusk.jpg") + f'''
 <section class="section"><div class="filters" data-filter-group="#ggrid">{pchips}</div><div class="gallery-masonry" id="ggrid">{gallery_items(chrono, True)}</div></section>{cta()}'''
 pages["photo.html"] = shell("photo.html", "Photo Gallery | Swastiik Group", "Photographs of every Swastiik Group residential and commercial project in Ahmedabad.", ph, "photo.html")
+
+# ---------------- MEMORIES ----------------
+MEM = json.load(open(os.path.join(ROOT, "_tools", "memories.json"), encoding="utf-8"))
+def mem_card(m):
+    lk = f'<a class="project-card-link" href="{m["link"]}">View project {ico("arrow-right")}</a>' if m.get("link") else ""
+    return (f'<article class="memory-card reveal"><a class="memory-img" href="{m["image"]}" data-lb data-cap="{E(m["title"])} · {E(m["year"])}">'
+            f'<img src="{m["image"]}" alt="{E(m["title"])}" loading="lazy"><span class="project-year-tag">{E(m["year"])}</span></a>'
+            f'<div class="memory-body"><h3>{E(m["title"])}</h3><p>{E(m["text"])}</p>{lk}</div></article>')
+mm = banner("Our <em>Memories</em>", "Moments and milestones from every address we have built together.", [("Home", "index.html"), ("Memories", None)], "images/projects/vimal_hero.jpg") + f'''
+<section class="section">{head("Milestones", "Memories worth<br><em>building on.</em>", "From our first project in 2013 to Scarlet Homes today.")}
+<div class="container grid-3">{"".join(mem_card(m) for m in MEM)}</div></section>{cta()}'''
+pages["memories.html"] = shell("memories.html", "Memories | Swastiik Group, Ahmedabad", "Memories and milestones from every Swastiik Group project since 2013.", mm, "memories.html", "images/projects/vimal_hero.jpg")
 
 # ---------------- PROJECT DETAIL PAGES ----------------
 for i, p in enumerate(chrono):
